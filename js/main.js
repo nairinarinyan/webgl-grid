@@ -9,6 +9,8 @@ let viewLocation, viewMatrix, projectionLocation, projectionMatrix, worldLocatio
 let rotationMatrix = m4.identity();
 let positionBuffer;
 
+const gridPositions = generateGrid(8);
+
 function init() {
     program = initShaders();
     gl.viewport(0, 0, canvas.width, canvas.height);
