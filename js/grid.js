@@ -1,19 +1,15 @@
 function generateGrid(d) {
-    const u = d/2;
-    let vertices = [];
+    var u = d/2;
+    var vertices = [];
 
-    // d + 1 vertical lines
-    for (let i = 0; i < d + 1; i++) {
-        const lineStart = [-u + i, 0, u];
-        const lineEnd = [-u + i, 0, -u];
-        vertices = vertices.concat(lineStart, lineEnd);
-    }
-
-    // d + 1 horizontal lines
-    for (let i = 0; i < d + 1; i++) {
-        const lineStart = [-u, 0, -u + i];
-        const lineEnd = [u, 0, -u + i];
-        vertices = vertices.concat(lineStart, lineEnd);
+    // d + 1 vertical and horizontal lines
+    for (var i = 0; i < d + 1; i++) {
+        vertices.push(
+            -u + i, 0, u,
+            -u + i, 0, -u,
+            -u, 0, -u + i,
+            u, 0, -u + i
+        );
     }
 
     return vertices;

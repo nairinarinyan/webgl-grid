@@ -1,15 +1,19 @@
-const canvas = document.querySelector('canvas');
-const gl = canvas.getContext('webgl');
+var canvas = document.querySelector('canvas');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+var ratio = window.devicePixelRatio;
+ratio = ratio < 1 ? 1 : ratio;
 
-let program;
-let viewLocation, viewMatrix, projectionLocation, projectionMatrix, worldLocation, worldMatrix;
-let rotationMatrix = m4.identity();
-let positionBuffer;
+canvas.width = canvas.clientWidth * ratio;
+canvas.height = canvas.clientHeight * ratio;
 
-const gridPositions = generateGrid(8);
+var gl = canvas.getContext('webgl');
+
+var program;
+var viewLocation, viewMatrix, projectionLocation, projectionMatrix, worldLocation, worldMatrix;
+var rotationMatrix = m4.identity();
+var positionBuffer;
+
+var gridPositions = generateGrid(22);
 
 function init() {
     program = initShaders();
@@ -20,26 +24,28 @@ function init() {
 }
 
 function initShaders() {
-    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
-    gl.shaderSource(vertexShader, vertexShaderSource);
-    gl.shaderSource(fragmentShader, fragmentShaderSource);
+    gl.shaderSource(vertexShader, document.querySelector('#vertex-shader').innerText);
+    gl.shaderSource(fragmentShader, document.querySelector('#fragment-shader').innerText);
+    // gl.shaderSource(vertexShader, vertexShaderSource);
+    // gl.shaderSource(fragmentShader, fragmentShaderSource);
     gl.compileShader(vertexShader);
     gl.compileShader(fragmentShader);
 
-    const vtxCompileStatus = gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS);
-    const fragCompileStatus = gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS);
+    var vtxCompileStatus = gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS);
+    var fragCompileStatus = gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS);
 
     !vtxCompileStatus && console.error(gl.getShaderInfoLog(vertexShader));
     !fragCompileStatus && console.error(gl.getShaderInfoLog(fragmentShader));
 
-    const program = gl.createProgram();
+    var program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
 
-    const linkStatus = gl.getProgramParameter(program, gl.LINK_STATUS);
+    var linkStatus = gl.getProgramParameter(program, gl.LINK_STATUS);
     !linkStatus && console.error(gl.getProgramInfoLog(program));
 
     gl.useProgram(program);
@@ -47,12 +53,12 @@ function initShaders() {
 }
 
 function setUpUniforms() {
-    const eye = [0,3,-10];
-    const target = [0,0,0];
-    const up = [0,1,0];
-    const aspect = canvas.width / canvas.height;
+    var eye = [0,3,-20];
+    var target = [0,0,0];
+    var up = [0,1,0];
+    var aspect = canvas.width / canvas.height;
 
-    const camera = m4.lookAt(eye, target, up);
+    var camera = m4.lookAt(eye, target, up);
     viewMatrix = m4.inverse(camera);
     projectionMatrix = m4.perspective(45, aspect, 0, 100);
 
@@ -68,14 +74,14 @@ function setUpBuffers() {
 }
 
 function setUniforms(time) {
-    rotationMatrix = m4.rotateY(rotationMatrix, .01);
+    rotationMatrix = m4.rotateY(rotationMatrix, .003);
     gl.uniformMatrix4fv(viewLocation, false, viewMatrix);
     gl.uniformMatrix4fv(projectionLocation, false, projectionMatrix);
     gl.uniformMatrix4fv(worldLocation, false, rotationMatrix);
 }
 
 function setUpAttributes() {
-    const positionLocation = gl.getAttribLocation(program, 'a_position');
+    var positionLocation = gl.getAttribLocation(program, 'a_position');
     gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLocation);
 }
@@ -85,7 +91,7 @@ function render(time) {
 
     setUniforms(time);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.clearColor(1,1,1,1);
+    gl.clearColor(233/255,241/255,247/255,1);
     gl.drawArrays(gl.LINES, 0, gridPositions.length/3);
 }
 

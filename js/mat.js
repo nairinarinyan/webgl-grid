@@ -1,5 +1,4 @@
-const m4 = (() => {
-
+var m4 = (function() {
 
 var MatType = Float32Array;
 

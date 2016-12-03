@@ -1,4 +1,4 @@
-const v3 = (() => {
+var v3 = (function() {
 
 var VecType = Float32Array;
 
